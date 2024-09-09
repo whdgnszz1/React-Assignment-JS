@@ -7,6 +7,7 @@ import RootSuspense from '@/pages/common/components/RootSuspense';
 import ErrorPage from '@/pages/error/components/ErrorPage';
 import NotFoundPage from '@/pages/error/components/NotFoundPage';
 import Home from '@/pages/home';
+import LoginPage from '@/pages/login';
 
 const CommonLayout = () => (
   <RootErrorBoundary>
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
     element: <CommonLayout />,
     children: [
       { path: pageRoutes.main, element: <Home />, errorElement: <ErrorPage /> },
+      {
+        path: pageRoutes.login,
+        element: <LoginPage />,
+        errorElement: <ErrorPage />,
+      },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
