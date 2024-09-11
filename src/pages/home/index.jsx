@@ -1,15 +1,29 @@
-import { Button } from '@/components/ui/button';
-import Layout from '@/pages/common/components/Layout';
-import React from 'react';
-import { authStatusType } from '../common/components/Layout';
+import React, { Suspense } from 'react';
 
-function Home() {
+import ApiErrorBoundary from '@/pages/common/components/ApiErrorBoundary';
+import Layout from '@/pages/common/components/Layout';
+import { ProductFilter } from './components/ProductFilter';
+import { ProductList } from './components/ProductList';
+
+const Home = () => {
   return (
-    <Layout authStatus={authStatusType.NEED_LOGIN}>
-      <div className="font-bold">Home</div>
-      <Button className="bg-blue-300">Button</Button>
+    <Layout className="p-4">
+      <ProductFilter />
+      <ApiErrorBoundary>
+        <Suspense fallback={<LoadingSkeleton />}>
+          <ProductList />
+        </Suspense>
+      </ApiErrorBoundary>
     </Layout>
   );
-}
+};
+
+const LoadingSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {[...Array(12)].map((_, index) => (
+      <div key={index} className="h-64 bg-gray-200 rounded-lg animate-pulse" />
+    ))}
+  </div>
+);
 
 export default Home;

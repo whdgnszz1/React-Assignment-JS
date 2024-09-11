@@ -26,7 +26,7 @@ const Layout = ({
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen mt-12">
       <main className="flex-grow">
         <div className={`container mx-auto px-4 ${containerClassName}`}>
           {children}
