@@ -1,32 +1,29 @@
+import { ALL_CATEGORY_ID } from '@/constants';
 import { db } from '@/firebase';
 import {
-  addDoc,
   collection,
+  doc,
   getDocs,
   limit,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
-  startAfter,
   where,
 } from 'firebase/firestore';
 
-export const fetchProducts = async (filter, lastVisibleId, pageLimit) => {
+export const fetchProducts = async (filter, pageSize, page) => {
   try {
-    let q = query(
-      collection(db, 'products'),
-      orderBy('createdAt', 'desc'),
-      limit(pageLimit)
-    );
+    let q = query(collection(db, 'products'), orderBy('id', 'desc'));
 
-    if (filter.categoryId && filter.categoryId !== '-1') {
+    if (filter.categoryId && filter.categoryId !== ALL_CATEGORY_ID) {
       q = query(q, where('category.id', '==', filter.categoryId));
     }
     if (filter.title) {
       q = query(
         q,
-        where('title', '>=', filter.title),
-        where('title', '<=', filter.title + '\uf8ff')
+        where('title', '>=', filter.title[0]),
+        where('title', '<=', filter.title[0] + '\uf8ff')
       );
     }
     if (filter.minPrice) {
@@ -36,23 +33,29 @@ export const fetchProducts = async (filter, lastVisibleId, pageLimit) => {
       q = query(q, where('price', '<=', Number(filter.maxPrice)));
     }
 
-    if (lastVisibleId) {
-      const lastVisibleDoc = await doc(db, 'products', lastVisibleId);
-      q = query(q, startAfter(lastVisibleDoc));
-    }
-
     const querySnapshot = await getDocs(q);
-    const products = querySnapshot.docs.map((doc) => ({
+    let products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate().toISOString(),
       updatedAt: doc.data().updatedAt?.toDate().toISOString(),
     }));
-    const newLastVisibleId =
-      querySnapshot.docs[querySnapshot.docs.length - 1]?.id;
-    const hasNextPage = querySnapshot.docs.length === pageLimit;
 
-    return { products, newLastVisibleId, hasNextPage };
+    if (filter.title) {
+      products = products.filter((product) =>
+        product.title.toLowerCase().includes(filter.title.toLowerCase())
+      );
+    }
+
+    const totalCount = products.length;
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedProducts = products.slice(startIndex, endIndex);
+
+    const hasNextPage = endIndex < totalCount;
+
+    return { products: paginatedProducts, hasNextPage, totalCount };
   } catch (error) {
     console.error('Error fetching products: ', error);
     throw error;
@@ -61,20 +64,37 @@ export const fetchProducts = async (filter, lastVisibleId, pageLimit) => {
 
 export const addProductAPI = async (productData) => {
   try {
-    const productRef = collection(db, 'products');
-    const newProductData = {
-      ...productData,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    };
-    const docRef = await addDoc(productRef, newProductData);
-    const newProduct = {
-      id: docRef.id,
-      ...newProductData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    return newProduct;
+    return await runTransaction(db, async (transaction) => {
+      const productsRef = collection(db, 'products');
+      const q = query(productsRef, orderBy('id', 'desc'), limit(1));
+      const querySnapshot = await getDocs(q);
+
+      let maxId = 0;
+      if (!querySnapshot.empty) {
+        maxId = querySnapshot.docs[0].data().id;
+      }
+
+      const newId = maxId + 1;
+
+      const newProductData = {
+        ...productData,
+        id: newId,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      const newDocRef = doc(productsRef);
+      transaction.set(newDocRef, newProductData);
+
+      const newProduct = {
+        ...newProductData,
+        id: newId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      return newProduct;
+    });
   } catch (error) {
     console.error('Error adding product: ', error);
     throw error;

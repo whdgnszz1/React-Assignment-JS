@@ -19,7 +19,7 @@ export const ProductCard = ({
     return null;
   }
 
-  const { title, images, price, category, id } = product;
+  const { title, image, price, category, id } = product;
 
   const handleClickItem = () => {
     navigate(pathToUrl(pageRoutes.productDetail, { productId: id }));
@@ -33,7 +33,7 @@ export const ProductCard = ({
 
   return (
     <Card className="cursor-pointer" onClick={handleClickItem}>
-      <img src={images?.[0]} alt={title} className="w-full h-40 object-cover" />
+      <img src={image} alt={title} className="w-full h-40 object-cover" />
       <CardContent className="p-4">
         <Badge variant="secondary" className="mb-2">
           {category.name}

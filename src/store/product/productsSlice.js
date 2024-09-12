@@ -5,10 +5,10 @@ const productsSlice = createSlice({
   name: 'products',
   initialState: {
     items: [],
-    lastVisibleId: null,
     hasNextPage: true,
     isLoading: false,
     error: null,
+    totalCount: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -17,11 +17,10 @@ const productsSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loadProducts.fulfilled, (state, action) => {
-        const { products, newLastVisibleId, hasNextPage, isInitial } =
-          action.payload;
+        const { products, hasNextPage, totalCount, isInitial } = action.payload;
         state.items = isInitial ? products : [...state.items, ...products];
-        state.lastVisibleId = newLastVisibleId;
         state.hasNextPage = hasNextPage;
+        state.totalCount = totalCount;
         state.isLoading = false;
         state.error = null;
       })
@@ -34,6 +33,7 @@ const productsSlice = createSlice({
       })
       .addCase(addProduct.fulfilled, (state, action) => {
         state.items.unshift(action.payload);
+        state.totalCount += 1;
         state.isLoading = false;
         state.error = null;
       })

@@ -22,7 +22,11 @@ import { uploadImage } from '@/utils/imageUpload';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-export const ProductRegistrationModal = ({ isOpen, onClose }) => {
+export const ProductRegistrationModal = ({
+  isOpen,
+  onClose,
+  onProductAdded,
+}) => {
   const dispatch = useDispatch();
   const [product, setProduct] = useState(initialProductState);
 
@@ -39,12 +43,13 @@ export const ProductRegistrationModal = ({ isOpen, onClose }) => {
     try {
       const imageUrl = await uploadImage(product.image);
       const newProduct = createNewProduct(product, imageUrl);
-      dispatch(addProduct(newProduct));
+      await dispatch(addProduct(newProduct));
       onClose();
+      onProductAdded();
     } catch (error) {
       console.error('Error adding product:', error);
     }
-  }, [product, dispatch, onClose]);
+  }, [product, dispatch, onClose, onProductAdded]);
 
   const handleCategoryChange = useCallback((value) => {
     setProduct((prev) => ({ ...prev, categoryId: value }));
