@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { visualizer } from 'rollup-plugin-visualizer';
+import viteCompression from 'vite-plugin-compression';
+import legacy from '@vitejs/plugin-legacy';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,17 +11,40 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [
     react(),
-    visualizer({
-      filename: './dist/stats.html',
-      open: true,
+
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: 'gzip',
+      ext: '.gz',
+    }),
+
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: 'brotliCompress',
+      ext: '.br',
+    }),
+
+    legacy({
+      targets: ['defaults', 'not IE 11'],
     }),
   ],
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src/'),
     },
   },
+
   build: {
+    target: 'es2015',
+    minify: 'esbuild',
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 500,
+
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -32,7 +56,22 @@ export default defineConfig({
               .toString();
           }
         },
+        assetFileNames: (assetInfo) => {
+          let extType = assetInfo.name.split('.')[1];
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            extType = 'img';
+          }
+          return `assets/${extType}/[name]-[hash][extname]`;
+        },
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
   },
+
+  server: {
+    compress: true,
+  },
+
+  sourcemap: process.env.NODE_ENV === 'development',
 });

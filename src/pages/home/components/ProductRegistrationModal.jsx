@@ -62,19 +62,30 @@ export const ProductRegistrationModal = ({
           <DialogTitle>상품 등록</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <Input name="title" placeholder="상품명" onChange={handleChange} />
+          <Input
+            name="title"
+            placeholder="상품명"
+            onChange={handleChange}
+            value={product.title || ''}
+          />
           <Input
             name="price"
             type="number"
             placeholder="가격"
             onChange={handleChange}
+            value={product.price || ''}
           />
           <Textarea
             name="description"
             placeholder="상품 설명"
             onChange={handleChange}
+            value={product.description || ''}
           />
-          <Select name="categoryId" onValueChange={handleCategoryChange}>
+          <Select
+            name="categoryId"
+            onValueChange={handleCategoryChange}
+            value={product.categoryId || ''}
+          >
             <SelectTrigger>
               <SelectValue placeholder="카테고리 선택" />
             </SelectTrigger>

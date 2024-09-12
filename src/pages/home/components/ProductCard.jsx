@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { pageRoutes } from '@/apiRoutes';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -14,26 +12,36 @@ export const ProductCard = ({
   onClickPurchaseButton,
 }) => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  if (!product) {
-    return null;
-  }
+  if (!product) return null;
 
   const { title, image, price, category, id } = product;
 
-  const handleClickItem = () => {
+  const handleClickItem = () =>
     navigate(pathToUrl(pageRoutes.productDetail, { productId: id }));
-  };
   const handleClickAddCartButton = (ev) => {
+    ev.stopPropagation();
     onClickAddCartButton(ev, product);
   };
   const handleClickPurchaseButton = (ev) => {
+    ev.stopPropagation();
     onClickPurchaseButton(ev, product);
   };
 
   return (
     <Card className="cursor-pointer" onClick={handleClickItem}>
-      <img src={image} alt={title} className="w-full h-40 object-cover" />
+      <div className="relative w-full h-40 bg-gray-200">
+        <img
+          src={image}
+          alt={`${title} 상품 이미지`}
+          className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
+          loading="lazy"
+          width="320"
+          height="160"
+        />
+      </div>
       <CardContent className="p-4">
         <Badge variant="secondary" className="mb-2">
           {category.name}

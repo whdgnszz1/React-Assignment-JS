@@ -21,12 +21,10 @@ const queryClient = new QueryClient({
 const isDevEnvironment = import.meta.env.DEV;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        {isDevEnvironment && <ReactQueryDevtools />}
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      {isDevEnvironment && <ReactQueryDevtools />}
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  </Provider>
 );

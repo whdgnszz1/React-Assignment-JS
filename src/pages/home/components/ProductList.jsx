@@ -1,5 +1,5 @@
 import { ChevronDown, Plus } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,9 +8,7 @@ import { Button } from '@/components/ui/button';
 import { extractIndexLink, isFirebaseIndexError } from '@/helpers/error';
 import { useModal } from '@/hooks/useModal';
 import { FirebaseIndexErrorModal } from '@/pages/error/components/FirebaseIndexErrorModal';
-
 import { selectIsLogin, selectUser } from '@/store/auth/authSelectors';
-import { selectCart } from '@/store/cart/cartSelectors';
 import { addCartItem } from '@/store/cart/cartSlice';
 import { selectFilter } from '@/store/filter/filterSelectors';
 import { loadProducts } from '@/store/product/productsActions';
@@ -20,13 +18,16 @@ import {
   selectProducts,
   selectTotalCount,
 } from '@/store/product/productsSelectors';
-
+import { PRODUCT_PAGE_SIZE } from '../../../constants';
 import { ProductCardSkeleton } from '../skeletons/ProductCardSkeleton';
 import { EmptyProduct } from './EmptyProduct';
 import { ProductCard } from './ProductCard';
-import { ProductRegistrationModal } from './ProductRegistrationModal';
 
-const PRODUCT_PAGE_SIZE = 3;
+const ProductRegistrationModal = lazy(() =>
+  import('./ProductRegistrationModal').then((module) => ({
+    default: module.ProductRegistrationModal,
+  }))
+);
 
 export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const navigate = useNavigate();
@@ -42,7 +43,6 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const filter = useSelector(selectFilter);
   const user = useSelector(selectUser);
   const isLogin = useSelector(selectIsLogin);
-  const cart = useSelector(selectCart);
   const totalCount = useSelector(selectTotalCount);
 
   const loadProductsData = useCallback(
@@ -106,30 +106,20 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
     loadProductsData(true);
   }, [loadProductsData]);
 
-  const renderProductCards = useMemo(
-    () =>
-      products.map((product, index) => (
-        <ProductCard
-          key={`${product.id}_${index}`}
-          product={product}
-          onClickAddCartButton={(ev) => {
-            ev.stopPropagation();
-            handleCartAction(product);
-          }}
-          onClickPurchaseButton={(ev) => {
-            ev.stopPropagation();
-            handlePurchaseAction(product);
-          }}
-        />
-      )),
-    [products, handleCartAction, handlePurchaseAction]
-  );
+  const firstProductImage = products[0]?.image;
+
+  useEffect(() => {
+    if (firstProductImage) {
+      const img = new Image();
+      img.src = firstProductImage;
+    }
+  }, [firstProductImage]);
 
   const renderContent = () => {
     if (isLoading && products.length === 0) {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[...Array(pageSize)].map((_, index) => (
+          {Array.from({ length: pageSize }, (_, index) => (
             <ProductCardSkeleton key={index} />
           ))}
         </div>
@@ -143,7 +133,20 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
     return (
       <>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {renderProductCards}
+          {products.map((product, index) => (
+            <ProductCard
+              key={`${product.id}_${index}`} // key 값 확인
+              product={product}
+              onClickAddCartButton={(ev) => {
+                ev.stopPropagation();
+                handleCartAction(product);
+              }}
+              onClickPurchaseButton={(ev) => {
+                ev.stopPropagation();
+                handlePurchaseAction(product);
+              }}
+            />
+          ))}
         </div>
         {hasNextPage && currentPage * pageSize < totalCount && (
           <div className="flex justify-center mt-4">
@@ -158,23 +161,29 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end mt-4">
-        <Button onClick={openModal}>
-          <Plus className="mr-2 h-4 w-4" /> 상품 등록
-        </Button>
+    <>
+      <div className="space-y-4">
+        <div className="flex justify-end mt-4">
+          <Button onClick={openModal}>
+            <Plus className="mr-2 h-4 w-4" /> 상품 등록
+          </Button>
+        </div>
+        {renderContent()}
+        <Suspense fallback={<div>Loading...</div>}>
+          {isOpen && (
+            <ProductRegistrationModal
+              isOpen={isOpen}
+              onClose={closeModal}
+              onProductAdded={handleProductAdded}
+            />
+          )}
+        </Suspense>
+        <FirebaseIndexErrorModal
+          isOpen={isIndexErrorModalOpen}
+          onClose={() => setIsIndexErrorModalOpen(false)}
+          indexLink={indexLink}
+        />
       </div>
-      {renderContent()}
-      <ProductRegistrationModal
-        isOpen={isOpen}
-        onClose={closeModal}
-        onProductAdded={handleProductAdded}
-      />
-      <FirebaseIndexErrorModal
-        isOpen={isIndexErrorModalOpen}
-        onClose={() => setIsIndexErrorModalOpen(false)}
-        indexLink={indexLink}
-      />
-    </div>
+    </>
   );
 };
