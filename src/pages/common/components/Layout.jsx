@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
+import { NavigationBar } from './NavigationBar';
 
 export const authStatusType = {
   NEED_LOGIN: 'NEED_LOGIN',
@@ -26,12 +27,15 @@ const Layout = ({
   }
 
   return (
-    <div className="flex flex-col min-h-screen mt-12">
-      <main className="flex-grow">
-        <div className={`container mx-auto px-4 ${containerClassName}`}>
-          {children}
-        </div>
-      </main>
+    <div>
+      <NavigationBar />
+      <div className="flex flex-col min-h-screen mt-24">
+        <main className="flex-grow">
+          <div className={`container mx-auto px-4 ${containerClassName}`}>
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

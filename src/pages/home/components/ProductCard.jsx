@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { pageRoutes } from '@/apiRoutes';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { pathToUrl } from '@/helpers/url';
 import { formatPrice } from '@/utils/formatter';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const ProductCard = ({
   product,
