@@ -23,10 +23,10 @@ export const NavigationBar = () => {
   const { cart } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    if (isLogin && user) {
+    if (isLogin && user && cart.length === 0) {
       dispatch(initCart(user.uid));
     }
-  }, [isLogin, user, dispatch]);
+  }, [isLogin, user, dispatch, cart.length]);
 
   const handleLogout = () => {
     openModal();
@@ -40,6 +40,10 @@ export const NavigationBar = () => {
 
   const handleClickLogo = () => {
     navigate(pageRoutes.main);
+  };
+
+  const handleCartClick = () => {
+    navigate(pageRoutes.cart);
   };
 
   return (
@@ -57,7 +61,7 @@ export const NavigationBar = () => {
               {isLogin ? (
                 <ApiErrorBoundary>
                   <Suspense fallback={<Skeleton className="w-24 h-8" />}>
-                    <CartButton cart={cart} />
+                    <CartButton cart={cart} onClick={handleCartClick} />
                     <LogoutButton data={user} onClick={handleLogout} />
                   </Suspense>
                 </ApiErrorBoundary>

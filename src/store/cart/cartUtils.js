@@ -5,14 +5,14 @@ const CART_LOCAL_STORAGE_KEY = 'CART_LOCAL_STORAGE_KEY';
 
 export const getCartFromLocalStorage = (userId) => {
   const cartItem = parseJSON(getItem(CART_LOCAL_STORAGE_KEY));
-  return cartItem?.[userId] ?? {};
+  return cartItem?.[userId] ?? [];
 };
 
 export const resetCartAtLocalStorage = (userId) => {
   const cartItem = parseJSON(getItem(CART_LOCAL_STORAGE_KEY));
   setItem(CART_LOCAL_STORAGE_KEY, {
     ...cartItem,
-    [userId]: undefined,
+    [userId]: [],
   });
 };
 
@@ -26,7 +26,7 @@ export const setCartToLocalStorage = (cart, userId) => {
 };
 
 export const calculateTotal = (cart) =>
-  Object.values(cart).reduce(
+  cart.reduce(
     (acc, item) => ({
       totalCount: acc.totalCount + item.count,
       totalPrice: acc.totalPrice + item.price * item.count,

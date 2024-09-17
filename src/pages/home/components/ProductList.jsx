@@ -135,7 +135,7 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product, index) => (
             <ProductCard
-              key={`${product.id}_${index}`} // key 값 확인
+              key={`${product.id}_${index}`}
               product={product}
               onClickAddCartButton={(ev) => {
                 ev.stopPropagation();

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 export const CartButton = ({ cart }) => {
   const navigate = useNavigate();
-  const cartItemCount = Object.keys(cart).length;
+  const cartItemCount = cart.length;
 
   const handleClickCart = () => {
     navigate(pageRoutes.cart);

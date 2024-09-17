@@ -9,6 +9,7 @@ import NotFoundPage from '@/pages/error/components/NotFoundPage';
 import Home from '@/pages/home';
 import LoginPage from '@/pages/login';
 import RegisterPage from '@/pages/register';
+import Cart from '@/pages/cart';
 
 const CommonLayout = () => (
   <RootErrorBoundary>
@@ -31,6 +32,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.login,
         element: <LoginPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.cart,
+        element: <Cart />,
         errorElement: <ErrorPage />,
       },
       { path: '*', element: <NotFoundPage /> },
