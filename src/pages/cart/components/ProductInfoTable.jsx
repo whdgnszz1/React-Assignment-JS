@@ -1,5 +1,3 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
   TableBody,
@@ -11,11 +9,13 @@ import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow
 import { selectUser } from '@/store/auth/authSelectors';
 import { selectCart } from '@/store/cart/cartSelectors';
 import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import React from 'react';
 
 export const ProductInfoTable = () => {
-  const dispatch = useDispatch();
-  const cart = useSelector(selectCart);
-  const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector(selectCart);
+  const user = useAppSelector(selectUser);
 
   const handleRemoveCartItem = (itemId) => {
     dispatch(removeCartItem({ itemId, userId: user.id }));

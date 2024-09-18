@@ -3,19 +3,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock, Mail, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
 import { EMAIL_PATTERN } from '@/constants';
 import Layout, { authStatusType } from '@/pages/common/components/Layout';
 import { registerUser } from '@/store/auth/authActions';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useEffect } from 'react';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { registerStatus, registerError } = useSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const { registerStatus, registerError } = useAppSelector(
+    (state) => state.auth
+  );
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

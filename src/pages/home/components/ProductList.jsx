@@ -1,16 +1,17 @@
 import { ChevronDown, Plus } from 'lucide-react';
 import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
 import { Button } from '@/components/ui/button';
+import { PRODUCT_PAGE_SIZE } from '@/constants';
 import { extractIndexLink, isFirebaseIndexError } from '@/helpers/error';
 import { useModal } from '@/hooks/useModal';
 import { FirebaseIndexErrorModal } from '@/pages/error/components/FirebaseIndexErrorModal';
 import { selectIsLogin, selectUser } from '@/store/auth/authSelectors';
 import { addCartItem } from '@/store/cart/cartSlice';
 import { selectFilter } from '@/store/filter/filterSelectors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadProducts } from '@/store/product/productsActions';
 import {
   selectHasNextPage,
@@ -18,7 +19,6 @@ import {
   selectProducts,
   selectTotalCount,
 } from '@/store/product/productsSelectors';
-import { PRODUCT_PAGE_SIZE } from '../../../constants';
 import { ProductCardSkeleton } from '../skeletons/ProductCardSkeleton';
 import { EmptyProduct } from './EmptyProduct';
 import { ProductCard } from './ProductCard';
@@ -31,19 +31,19 @@ const ProductRegistrationModal = lazy(() =>
 
 export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentPage, setCurrentPage] = useState(1);
   const [isIndexErrorModalOpen, setIsIndexErrorModalOpen] = useState(false);
   const [indexLink, setIndexLink] = useState(null);
 
-  const products = useSelector(selectProducts);
-  const hasNextPage = useSelector(selectHasNextPage);
-  const isLoading = useSelector(selectIsLoading);
-  const filter = useSelector(selectFilter);
-  const user = useSelector(selectUser);
-  const isLogin = useSelector(selectIsLogin);
-  const totalCount = useSelector(selectTotalCount);
+  const products = useAppSelector(selectProducts);
+  const hasNextPage = useAppSelector(selectHasNextPage);
+  const isLoading = useAppSelector(selectIsLoading);
+  const filter = useAppSelector(selectFilter);
+  const user = useAppSelector(selectUser);
+  const isLogin = useAppSelector(selectIsLogin);
+  const totalCount = useAppSelector(selectTotalCount);
 
   const loadProductsData = useCallback(
     async (isInitial = false) => {

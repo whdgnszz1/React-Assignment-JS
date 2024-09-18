@@ -1,6 +1,3 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
@@ -8,9 +5,12 @@ import { MAX_CART_VALUE } from '@/constants';
 import { cartValidationMessages } from '@/messages';
 import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
 import { formatPrice } from '@/utils/formatter';
+import { useAppDispatch } from '@/store/hooks';
+import { Trash2 } from 'lucide-react';
+import React from 'react';
 
 export const ProductInfoTableRow = ({ item, user }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { id, title, count, image, price } = item;
 
   const handleClickDeleteItem = () => {

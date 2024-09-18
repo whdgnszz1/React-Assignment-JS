@@ -17,17 +17,17 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { ALL_CATEGORY_ID, categories } from '@/constants';
 import { createNewProduct, initialProductState } from '@/helpers/product';
+import { useAppDispatch } from '@/store/hooks';
 import { addProduct } from '@/store/product/productsActions';
 import { uploadImage } from '@/utils/imageUpload';
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 export const ProductRegistrationModal = ({
   isOpen,
   onClose,
   onProductAdded,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [product, setProduct] = useState(initialProductState);
 
   const handleChange = useCallback((e) => {

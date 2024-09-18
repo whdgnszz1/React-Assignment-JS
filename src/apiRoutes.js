@@ -3,4 +3,5 @@ export const pageRoutes = {
   register: '/register',
   login: '/login',
   cart: '/cart',
+  purchase: '/purchase',
 };

@@ -1,7 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import React, { Suspense, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   setCategoryId,
@@ -10,6 +9,7 @@ import {
   setTitle,
 } from '@/store/filter/filterActions';
 import { selectFilter } from '@/store/filter/filterSelectors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { debounce } from '@/utils/common';
 import ApiErrorBoundary from '../../common/components/ApiErrorBoundary';
 import { CategoryRadioGroup } from './CategoryRadioGroup';
@@ -23,8 +23,8 @@ const ProductFilterBox = ({ children }) => (
 );
 
 export const ProductFilter = () => {
-  const dispatch = useDispatch();
-  const filterState = useSelector(selectFilter);
+  const dispatch = useAppDispatch();
+  const filterState = useAppSelector(selectFilter);
 
   const handleChangeInput = useCallback(
     debounce((ev) => {

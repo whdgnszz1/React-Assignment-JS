@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie';
 import React, { Suspense, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
@@ -10,6 +9,7 @@ import { initCart } from '@/store/cart/cartSlice';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useModal } from '@/hooks/useModal';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { CartButton } from './CartButton';
 import { ConfirmModal } from './ConfirmModal';
 import { LoginButton } from './LoginButton';
@@ -17,10 +17,10 @@ import { LogoutButton } from './LogoutButton';
 
 export const NavigationBar = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { isOpen, openModal, closeModal } = useModal();
-  const { isLogin, user } = useSelector((state) => state.auth);
-  const { cart } = useSelector((state) => state.cart);
+  const { isLogin, user } = useAppSelector((state) => state.auth);
+  const { cart } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
     if (isLogin && user && cart.length === 0) {
