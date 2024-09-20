@@ -1,5 +1,5 @@
 import { ChevronDown, Plus } from 'lucide-react';
-import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
@@ -23,12 +23,6 @@ import { ProductCardSkeleton } from '../skeletons/ProductCardSkeleton';
 import { EmptyProduct } from './EmptyProduct';
 import { ProductCard } from './ProductCard';
 
-const ProductRegistrationModal = lazy(() =>
-  import('./ProductRegistrationModal').then((module) => ({
-    default: module.ProductRegistrationModal,
-  }))
-);
-
 export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -45,66 +39,57 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const isLogin = useAppSelector(selectIsLogin);
   const totalCount = useAppSelector(selectTotalCount);
 
-  const loadProductsData = useCallback(
-    async (isInitial = false) => {
-      try {
-        const page = isInitial ? 1 : currentPage + 1;
-        await dispatch(
-          loadProducts({
-            filter,
-            pageSize,
-            page,
-            isInitial,
-          })
-        ).unwrap();
-        if (!isInitial) {
-          setCurrentPage(page);
-        }
-      } catch (error) {
-        if (isFirebaseIndexError(error)) {
-          const link = extractIndexLink(error);
-          setIndexLink(link);
-          setIsIndexErrorModalOpen(true);
-        }
-        throw error;
+  const loadProductsData = async (isInitial = false) => {
+    try {
+      const page = isInitial ? 1 : currentPage + 1;
+      await dispatch(
+        loadProducts({
+          filter,
+          pageSize,
+          page,
+          isInitial,
+        })
+      ).unwrap();
+      if (!isInitial) {
+        setCurrentPage(page);
       }
-    },
-    [dispatch, filter, pageSize, currentPage]
-  );
+    } catch (error) {
+      if (isFirebaseIndexError(error)) {
+        const link = extractIndexLink(error);
+        setIndexLink(link);
+        setIsIndexErrorModalOpen(true);
+      }
+      throw error;
+    }
+  };
 
   useEffect(() => {
     setCurrentPage(1);
     loadProductsData(true);
   }, [filter]);
 
-  const handleCartAction = useCallback(
-    (product) => {
-      if (isLogin) {
-        dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
-        console.log(`${product.title} 상품이 \n장바구니에 담겼습니다.`);
-      } else {
-        navigate(pageRoutes.login);
-      }
-    },
-    [dispatch, isLogin, user, navigate]
-  );
+  const handleCartAction = (product) => {
+    if (isLogin) {
+      dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
+      console.log(`${product.title} 상품이 \n장바구니에 담겼습니다.`);
+    } else {
+      navigate(pageRoutes.login);
+    }
+  };
 
-  const handlePurchaseAction = useCallback(
-    (product) => {
-      if (isLogin) {
-        dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
-        navigate(pageRoutes.cart);
-      } else {
-        navigate(pageRoutes.login);
-      }
-    },
-    [dispatch, isLogin, user, navigate]
-  );
+  const handlePurchaseAction = (product) => {
+    if (isLogin) {
+      dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
+      navigate(pageRoutes.cart);
+    } else {
+      navigate(pageRoutes.login);
+    }
+  };
 
-  const handleProductAdded = useCallback(() => {
+  const handleProductAdded = () => {
     setCurrentPage(1);
     loadProductsData(true);
-  }, [loadProductsData]);
+  };
 
   const firstProductImage = products[0]?.image;
 
@@ -169,15 +154,13 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
           </Button>
         </div>
         {renderContent()}
-        <Suspense fallback={<div>Loading...</div>}>
-          {isOpen && (
-            <ProductRegistrationModal
-              isOpen={isOpen}
-              onClose={closeModal}
-              onProductAdded={handleProductAdded}
-            />
-          )}
-        </Suspense>
+        {isOpen && (
+          <ProductRegistrationModal
+            isOpen={isOpen}
+            onClose={closeModal}
+            onProductAdded={handleProductAdded}
+          />
+        )}
         <FirebaseIndexErrorModal
           isOpen={isIndexErrorModalOpen}
           onClose={() => setIsIndexErrorModalOpen(false)}

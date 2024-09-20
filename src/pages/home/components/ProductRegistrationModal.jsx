@@ -20,7 +20,7 @@ import { createNewProduct, initialProductState } from '@/helpers/product';
 import { useAppDispatch } from '@/store/hooks';
 import { addProduct } from '@/store/product/productsActions';
 import { uploadImage } from '@/utils/imageUpload';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 export const ProductRegistrationModal = ({
   isOpen,
@@ -30,16 +30,16 @@ export const ProductRegistrationModal = ({
   const dispatch = useAppDispatch();
   const [product, setProduct] = useState(initialProductState);
 
-  const handleChange = useCallback((e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
-  }, []);
+  };
 
-  const handleImageChange = useCallback((e) => {
+  const handleImageChange = (e) => {
     setProduct((prev) => ({ ...prev, image: e.target.files[0] }));
-  }, []);
+  };
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     try {
       const imageUrl = await uploadImage(product.image);
       const newProduct = createNewProduct(product, imageUrl);
@@ -49,11 +49,11 @@ export const ProductRegistrationModal = ({
     } catch (error) {
       console.error('Error adding product:', error);
     }
-  }, [product, dispatch, onClose, onProductAdded]);
+  };
 
-  const handleCategoryChange = useCallback((value) => {
+  const handleCategoryChange = (value) => {
     setProduct((prev) => ({ ...prev, categoryId: value }));
-  }, []);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

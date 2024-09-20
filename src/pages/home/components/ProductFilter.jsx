@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense } from 'react';
 
 import {
   setCategoryId,
@@ -26,46 +26,33 @@ export const ProductFilter = () => {
   const dispatch = useAppDispatch();
   const filterState = useAppSelector(selectFilter);
 
-  const handleChangeInput = useCallback(
+  const handleChangeInput = debounce((ev) => {
+    dispatch(setTitle(ev.target.value));
+  }, 300);
+
+  const handlePriceChange = (actionCreator) =>
     debounce((ev) => {
-      dispatch(setTitle(ev.target.value));
-    }, 300),
-    [dispatch]
-  );
-
-  const handlePriceChange = useCallback(
-    (actionCreator) =>
-      debounce((ev) => {
-        const value = ev.target.value;
-        if (value === '') {
-          dispatch(actionCreator(null));
-        } else {
-          const numericValue = Math.max(0, parseInt(value, 10));
-          if (!isNaN(numericValue)) {
-            dispatch(actionCreator(numericValue));
-          }
-        }
-      }, 300),
-    [dispatch]
-  );
-
-  const handleMinPrice = useCallback(handlePriceChange(setMinPrice), [
-    handlePriceChange,
-  ]);
-  const handleMaxPrice = useCallback(handlePriceChange(setMaxPrice), [
-    handlePriceChange,
-  ]);
-
-  const handleChangeCategory = useCallback(
-    (value) => {
-      if (value !== undefined) {
-        dispatch(setCategoryId(value));
+      const value = ev.target.value;
+      if (value === '') {
+        dispatch(actionCreator(null));
       } else {
-        console.error('Category value is undefined');
+        const numericValue = Math.max(0, parseInt(value, 10));
+        if (!isNaN(numericValue)) {
+          dispatch(actionCreator(numericValue));
+        }
       }
-    },
-    [dispatch]
-  );
+    }, 300);
+
+  const handleMinPrice = handlePriceChange(setMinPrice);
+  const handleMaxPrice = handlePriceChange(setMaxPrice);
+
+  const handleChangeCategory = (value) => {
+    if (value !== undefined) {
+      dispatch(setCategoryId(value));
+    } else {
+      console.error('Category value is undefined');
+    }
+  };
 
   return (
     <div className="space-y-4">
