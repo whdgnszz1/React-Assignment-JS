@@ -9,9 +9,9 @@ import {
 } from './filterActions';
 
 const initialState = {
-  minPrice: null,
-  maxPrice: null,
-  title: null,
+  minPrice: 0,
+  maxPrice: 0,
+  title: '',
   categoryId: ALL_CATEGORY_ID,
 };
 

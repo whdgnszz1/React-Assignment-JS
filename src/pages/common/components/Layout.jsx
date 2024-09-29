@@ -1,8 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-
 import { pageRoutes } from '@/apiRoutes';
 import { useAppSelector } from '@/store/hooks';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { NavigationBar } from './NavigationBar';
 
 export const authStatusType = {
@@ -11,7 +10,7 @@ export const authStatusType = {
   COMMON: 'COMMON',
 };
 
-const Layout = ({
+export const Layout = ({
   children,
   containerClassName,
   authStatus = authStatusType.COMMON,
@@ -39,5 +38,3 @@ const Layout = ({
     </div>
   );
 };
-
-export default Layout;

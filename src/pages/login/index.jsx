@@ -10,11 +10,11 @@ import { useNavigate } from 'react-router-dom';
 import { pageRoutes } from '@/apiRoutes';
 import { EMAIL_PATTERN } from '@/constants';
 import { auth } from '@/firebase';
-import Layout, { authStatusType } from '@/pages/common/components/Layout';
+import { Layout, authStatusType } from '@/pages/common/components/Layout';
 import { setIsLogin, setUser } from '@/store/auth/authSlice';
 import { useAppDispatch } from '@/store/hooks';
 
-const LoginPage = () => {
+export const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -55,13 +55,16 @@ const LoginPage = () => {
         Cookies.set('accessToken', token, { expires: 7 });
 
         dispatch(setIsLogin(true));
-        dispatch(
-          setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-          })
-        );
+        if (user) {
+          dispatch(
+            setUser({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+            })
+          );
+        }
+
         navigate(pageRoutes.main);
       } catch (error) {
         console.error(
@@ -127,5 +130,3 @@ const LoginPage = () => {
     </Layout>
   );
 };
-
-export default LoginPage;

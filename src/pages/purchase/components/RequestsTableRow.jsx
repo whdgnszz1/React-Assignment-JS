@@ -20,6 +20,7 @@ export const RequestsTableRow = ({ value, onChange }) => {
           value={value}
           onChange={onChange}
           placeholder="요청사항을 입력하세요"
+          className="resize-none"
         />
       </TableCell>
     </TableRow>

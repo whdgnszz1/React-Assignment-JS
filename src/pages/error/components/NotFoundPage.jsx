@@ -1,8 +1,7 @@
+import { pageRoutes } from '@/apiRoutes';
+import { Button } from '@/components/ui/Button';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
-
-import { pageRoutes } from '@/apiRoutes';
 
 export const NotFoundPage = () => {
   const navigate = useNavigate();

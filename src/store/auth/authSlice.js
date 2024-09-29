@@ -32,10 +32,11 @@ export const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.registerStatus = 'succeeded';
         state.user = action.payload;
+        state.isLogin = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.registerStatus = 'failed';
-        state.registerError = action.payload;
+        state.registerError = action.payload || 'Registration failed';
       });
   },
 });

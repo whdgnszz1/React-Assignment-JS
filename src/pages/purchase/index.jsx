@@ -9,7 +9,7 @@ import { makePurchase } from '@/api/purchase';
 import { pageRoutes } from '@/apiRoutes';
 
 import { PHONE_PATTERN } from '@/constants';
-import Layout, { authStatusType } from '@/pages/common/components/Layout';
+import { Layout, authStatusType } from '@/pages/common/components/Layout';
 import { ItemList } from '@/pages/purchase/components/ItemList';
 import { Payment } from '@/pages/purchase/components/Payment';
 import { ShippingInformationForm } from '@/pages/purchase/components/ShippingInformationForm';
@@ -23,7 +23,7 @@ import {
   purchaseSuccess,
 } from '@/store/purchase/purchaseSlice';
 
-const Purchase = () => {
+export const Purchase = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -71,10 +71,19 @@ const Purchase = () => {
     if (!isFormValid) return;
 
     dispatch(purchaseStart());
+    const purchaseData = {
+      ...formData,
+      totalAmount: 0,
+      paymentMethod: formData.payment,
+      shippingAddress: formData.address,
+    };
+
     try {
-      await makePurchase(formData, user.uid, cart);
+      await makePurchase(purchaseData, user.uid, cart);
       dispatch(purchaseSuccess());
-      dispatch(resetCart(user.uid));
+      if (user) {
+        dispatch(resetCart(user.uid));
+      }
       console.log('구매 성공!');
       navigate(pageRoutes.main);
     } catch (err) {
@@ -85,7 +94,7 @@ const Purchase = () => {
 
   return (
     <Layout
-      containerStyle={{ paddingTop: '30px' }}
+      containerClassName="pt-[30px]"
       authStatus={authStatusType.NEED_LOGIN}
     >
       <Card className="w-full max-w-4xl mx-auto">
@@ -123,5 +132,3 @@ const Purchase = () => {
     </Layout>
   );
 };
-
-export default Purchase;

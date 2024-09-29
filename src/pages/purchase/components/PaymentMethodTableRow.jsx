@@ -15,15 +15,6 @@ export const PaymentMethodTableRow = ({
     { value: 'depositWithoutPassbook', label: '무통장입금', icon: Wallet },
   ];
 
-  const handlePaymentChange = (value) => {
-    onPaymentMethodChange({
-      target: {
-        name: 'payment',
-        value: value,
-      },
-    });
-  };
-
   return (
     <TableRow>
       <TableCell className="font-bold">
@@ -35,7 +26,11 @@ export const PaymentMethodTableRow = ({
       <TableCell>
         <RadioGroup
           value={paymentMethod}
-          onValueChange={handlePaymentChange}
+          onValueChange={(value) =>
+            onPaymentMethodChange({
+              target: { name: 'payment', value },
+            })
+          }
           className="flex flex-wrap gap-4"
         >
           {paymentMethods.map(({ value, label, icon: Icon }) => (

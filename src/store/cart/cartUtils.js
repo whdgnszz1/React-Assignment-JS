@@ -4,12 +4,19 @@ import { parseJSON } from '@/utils/common';
 const CART_LOCAL_STORAGE_KEY = 'CART_LOCAL_STORAGE_KEY';
 
 export const getCartFromLocalStorage = (userId) => {
-  const cartItem = parseJSON(getItem(CART_LOCAL_STORAGE_KEY));
+  const cartData = getItem(CART_LOCAL_STORAGE_KEY);
+  if (!cartData) {
+    return [];
+  }
+
+  const cartItem = parseJSON(cartData) | null;
   return cartItem?.[userId] ?? [];
 };
 
 export const resetCartAtLocalStorage = (userId) => {
-  const cartItem = parseJSON(getItem(CART_LOCAL_STORAGE_KEY));
+  const cartData = getItem(CART_LOCAL_STORAGE_KEY);
+  const cartItem = cartData ? parseJSON(cartData) : {};
+
   setItem(CART_LOCAL_STORAGE_KEY, {
     ...cartItem,
     [userId]: [],
@@ -17,12 +24,13 @@ export const resetCartAtLocalStorage = (userId) => {
 };
 
 export const setCartToLocalStorage = (cart, userId) => {
-  const cartItem = parseJSON(getItem(CART_LOCAL_STORAGE_KEY));
-  if (!cartItem) {
-    setItem(CART_LOCAL_STORAGE_KEY, { [userId]: cart });
-    return;
-  }
-  setItem(CART_LOCAL_STORAGE_KEY, { ...cartItem, [userId]: cart });
+  const cartData = getItem(CART_LOCAL_STORAGE_KEY);
+  const cartItem = cartData ? parseJSON(cartData) : {};
+
+  setItem(CART_LOCAL_STORAGE_KEY, {
+    ...cartItem,
+    [userId]: cart,
+  });
 };
 
 export const calculateTotal = (cart) =>

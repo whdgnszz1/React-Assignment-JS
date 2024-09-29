@@ -4,8 +4,8 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { MAX_CART_VALUE } from '@/constants';
 import { cartValidationMessages } from '@/messages';
 import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
-import { formatPrice } from '@/utils/formatter';
 import { useAppDispatch } from '@/store/hooks';
+import { formatPrice } from '@/utils/formatter';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 
@@ -14,7 +14,9 @@ export const ProductInfoTableRow = ({ item, user }) => {
   const { id, title, count, image, price } = item;
 
   const handleClickDeleteItem = () => {
-    dispatch(removeCartItem({ itemId: id, userId: user.id }));
+    if (user) {
+      dispatch(removeCartItem({ itemId: id, userId: user.id }));
+    }
   };
 
   const handleChangeCount = (event) => {

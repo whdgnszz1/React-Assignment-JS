@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 
+import { ApiErrorBoundary } from '@/pages/common/components/ApiErrorBoundary';
 import {
   setCategoryId,
   setMaxPrice,
@@ -11,7 +12,7 @@ import {
 import { selectFilter } from '@/store/filter/filterSelectors';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { debounce } from '@/utils/common';
-import ApiErrorBoundary from '../../common/components/ApiErrorBoundary';
+import React from 'react';
 import { CategoryRadioGroup } from './CategoryRadioGroup';
 import { PriceRange } from './PriceRange';
 import { SearchBar } from './SearchBar';
@@ -50,7 +51,7 @@ export const ProductFilter = () => {
     if (value !== undefined) {
       dispatch(setCategoryId(value));
     } else {
-      console.error('Category value is undefined');
+      console.error('카테고리가 설정되지 않았습니다.');
     }
   };
 

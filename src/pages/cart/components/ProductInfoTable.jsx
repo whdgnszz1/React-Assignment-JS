@@ -8,22 +8,12 @@ import {
 import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow';
 import { selectUser } from '@/store/auth/authSelectors';
 import { selectCart } from '@/store/cart/cartSelectors';
-import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import React from 'react';
 
 export const ProductInfoTable = () => {
-  const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCart);
   const user = useAppSelector(selectUser);
-
-  const handleRemoveCartItem = (itemId) => {
-    dispatch(removeCartItem({ itemId, userId: user.id }));
-  };
-
-  const handleChangeCartItemCount = (itemId, count) => {
-    dispatch(changeCartItemCount({ itemId, count, userId: user.id }));
-  };
 
   return (
     <Table>
@@ -38,13 +28,7 @@ export const ProductInfoTable = () => {
       </TableHeader>
       <TableBody>
         {cart.map((item) => (
-          <ProductInfoTableRow
-            key={item.id}
-            item={item}
-            user={user}
-            removeCartItem={handleRemoveCartItem}
-            changeCartItemCount={handleChangeCartItemCount}
-          />
+          <ProductInfoTableRow key={item.id} item={item} user={user} />
         ))}
       </TableBody>
     </Table>

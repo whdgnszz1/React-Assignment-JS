@@ -20,7 +20,7 @@ import { createNewProduct, initialProductState } from '@/helpers/product';
 import { useAppDispatch } from '@/store/hooks';
 import { addProduct } from '@/store/product/productsActions';
 import { uploadImage } from '@/utils/imageUpload';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const ProductRegistrationModal = ({
   isOpen,
@@ -41,13 +41,21 @@ export const ProductRegistrationModal = ({
 
   const handleSubmit = async () => {
     try {
+      if (!product.image) {
+        throw new Error('이미지를 선택해야 합니다.');
+      }
+
       const imageUrl = await uploadImage(product.image);
+      if (!imageUrl) {
+        throw new Error('이미지 업로드에 실패했습니다.');
+      }
+
       const newProduct = createNewProduct(product, imageUrl);
       await dispatch(addProduct(newProduct));
       onClose();
       onProductAdded();
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error('물품 등록에 실패했습니다.', error);
     }
   };
 

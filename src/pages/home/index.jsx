@@ -1,11 +1,10 @@
+import { ApiErrorBoundary } from '@/pages/common/components/ApiErrorBoundary';
+import { Layout } from '@/pages/common/components/Layout';
 import React, { Suspense } from 'react';
-
-import ApiErrorBoundary from '@/pages/common/components/ApiErrorBoundary';
-import Layout from '@/pages/common/components/Layout';
 import { ProductFilter } from './components/ProductFilter';
 import { ProductList } from './components/ProductList';
 
-const Home = () => {
+export const Home = () => {
   return (
     <Layout className="p-4">
       <ProductFilter />
@@ -25,5 +24,3 @@ const LoadingSkeleton = () => (
     ))}
   </div>
 );
-
-export default Home;

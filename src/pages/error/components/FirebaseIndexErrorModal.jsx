@@ -1,12 +1,12 @@
-import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 
 export const FirebaseIndexErrorModal = ({ isOpen, onClose, indexLink }) => {
   return (

@@ -1,15 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loadProducts, addProduct } from './productsActions';
 
+const initialState = {
+  items: [],
+  hasNextPage: true,
+  isLoading: false,
+  error: null,
+  totalCount: 0,
+};
+
 const productsSlice = createSlice({
   name: 'products',
-  initialState: {
-    items: [],
-    hasNextPage: true,
-    isLoading: false,
-    error: null,
-    totalCount: 0,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -39,7 +41,7 @@ const productsSlice = createSlice({
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload;
+        state.error = action.payload || '상품 등록에 실패하였습니다.';
       });
   },
 });

@@ -1,9 +1,8 @@
-import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-import Layout from '@/pages/common/components/Layout';
+import { Layout } from '@/pages/common/components/Layout';
 
-const LoadingPage = () => {
+export const LoadingPage = () => {
   return (
     <Layout containerClassName="pt-8">
       <div className="flex justify-center items-center h-[300px]">
@@ -12,5 +11,3 @@ const LoadingPage = () => {
     </Layout>
   );
 };
-
-export default LoadingPage;

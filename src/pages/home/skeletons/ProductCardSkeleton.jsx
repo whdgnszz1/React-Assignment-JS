@@ -1,5 +1,5 @@
-import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import React from 'react';
 
 export const ProductCardSkeleton = () => (
   <Card className="animate-pulse">

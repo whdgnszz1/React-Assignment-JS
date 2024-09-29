@@ -2,17 +2,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock, Mail, User } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { pageRoutes } from '@/apiRoutes';
 import { EMAIL_PATTERN } from '@/constants';
-import Layout, { authStatusType } from '@/pages/common/components/Layout';
+import { Layout, authStatusType } from '@/pages/common/components/Layout';
 import { registerUser } from '@/store/auth/authActions';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { useEffect } from 'react';
 
-const RegisterPage = () => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { registerStatus, registerError } = useAppSelector(
@@ -59,6 +58,21 @@ const RegisterPage = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    switch (id) {
+      case 'name':
+        setName(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+    }
+  };
+
   return (
     <Layout authStatus={authStatusType.NEED_NOT_LOGIN}>
       <div className="w-full h-screen max-w-md mx-auto space-y-8 flex flex-col justify-center">
@@ -72,7 +86,7 @@ const RegisterPage = () => {
                 type="text"
                 className="pl-10"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleInputChange}
               />
             </div>
             {errors.name && (
@@ -88,7 +102,7 @@ const RegisterPage = () => {
                 type="email"
                 className="pl-10"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleInputChange}
               />
             </div>
             {errors.email && (
@@ -104,7 +118,7 @@ const RegisterPage = () => {
                 type="password"
                 className="pl-10"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleInputChange}
               />
             </div>
             {errors.password && (
@@ -126,5 +140,3 @@ const RegisterPage = () => {
     </Layout>
   );
 };
-
-export default RegisterPage;

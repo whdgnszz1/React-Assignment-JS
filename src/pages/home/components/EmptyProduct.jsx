@@ -1,6 +1,6 @@
-import React from 'react';
-import { Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Package } from 'lucide-react';
+import React from 'react';
 
 export const EmptyProduct = ({ onAddProduct }) => {
   return (

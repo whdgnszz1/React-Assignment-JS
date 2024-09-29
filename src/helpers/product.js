@@ -18,6 +18,6 @@ export const initialProductState = {
   title: '',
   price: '',
   description: '',
-  categoryId: '',
+  category: { id: '', name: '' },
   image: null,
 };

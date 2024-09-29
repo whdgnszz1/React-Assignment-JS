@@ -1,7 +1,3 @@
-import { ChevronDown, Plus } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { pageRoutes } from '@/apiRoutes';
 import { Button } from '@/components/ui/button';
 import { PRODUCT_PAGE_SIZE } from '@/constants';
@@ -19,6 +15,9 @@ import {
   selectProducts,
   selectTotalCount,
 } from '@/store/product/productsSelectors';
+import { ChevronDown, Plus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ProductCardSkeleton } from '../skeletons/ProductCardSkeleton';
 import { EmptyProduct } from './EmptyProduct';
 import { ProductCard } from './ProductCard';
@@ -69,7 +68,7 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   }, [filter]);
 
   const handleCartAction = (product) => {
-    if (isLogin) {
+    if (isLogin && user) {
       dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
       console.log(`${product.title} 상품이 \n장바구니에 담겼습니다.`);
     } else {
@@ -78,7 +77,7 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   };
 
   const handlePurchaseAction = (product) => {
-    if (isLogin) {
+    if (isLogin && user) {
       dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
       navigate(pageRoutes.cart);
     } else {

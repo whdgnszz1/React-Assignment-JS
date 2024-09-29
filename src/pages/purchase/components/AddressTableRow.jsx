@@ -1,8 +1,8 @@
-import React from 'react';
-import { TableCell, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { TableCell, TableRow } from '@/components/ui/table';
 import { MapPin } from 'lucide-react';
+import React from 'react';
 
 export const AddressTableRow = ({ value, onChange, error }) => {
   return (
@@ -20,9 +20,7 @@ export const AddressTableRow = ({ value, onChange, error }) => {
           value={value}
           onChange={onChange}
           placeholder="주소를 입력하세요"
-          className={error ? 'border-red-500' : ''}
         />
-        {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
       </TableCell>
     </TableRow>
   );
