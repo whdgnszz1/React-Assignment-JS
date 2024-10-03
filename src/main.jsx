@@ -8,14 +8,7 @@ import { RouterProvider } from 'react-router-dom';
 import './index.css';
 import { store } from './store';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      suspense: true,
-      useErrorBoundary: true,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const isDevEnvironment = import.meta.env.DEV;
 
