@@ -1,35 +1,40 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { MAX_CART_VALUE } from '@/constants';
-import { cartValidationMessages } from '@/messages';
-import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
-import { useAppDispatch } from '@/store/hooks';
-import { formatPrice } from '@/utils/formatter';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 
+import { useCartStore } from '@/store/cart/useCartStore';
+
+import { MAX_CART_VALUE } from '@/constants';
+import { cartValidationMessages } from '@/messages';
+import { formatPrice } from '@/utils/formatter';
+
 export const ProductInfoTableRow = ({ item, user }) => {
-  const dispatch = useAppDispatch();
   const { id, title, count, image, price } = item;
+
+  const removeCartItem = useCartStore((state) => state.removeCartItem);
+  const changeCartItemCount = useCartStore(
+    (state) => state.changeCartItemCount
+  );
 
   const handleClickDeleteItem = () => {
     if (user) {
-      dispatch(removeCartItem({ itemId: id, userId: user.id }));
+      removeCartItem(id, user.uid);
     }
   };
 
-  const handleChangeCount = (event) => {
-    const newCount = Number(event.target.value);
+  const handleChangeCount = (e) => {
+    const newCount = Number(e.target.value);
 
     if (newCount > MAX_CART_VALUE) {
       alert(cartValidationMessages.MAX_INPUT_VALUE);
       return;
     }
 
-    dispatch(
-      changeCartItemCount({ itemId: id, userId: user.id, count: newCount })
-    );
+    if (user) {
+      changeCartItemCount({ itemId: id, count: newCount, userId: user.uid });
+    }
   };
 
   return (
@@ -44,6 +49,8 @@ export const ProductInfoTableRow = ({ item, user }) => {
           onChange={handleChangeCount}
           value={count}
           className="w-20"
+          min={1}
+          max={MAX_CART_VALUE}
         />
       </TableCell>
       <TableCell>{formatPrice(price * count)}</TableCell>

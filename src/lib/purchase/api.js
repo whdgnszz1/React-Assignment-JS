@@ -6,7 +6,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-export const makePurchase = async (purchaseData, userId, cartData) => {
+export const makePurchaseAPI = async (purchaseData, userId, cartData) => {
   try {
     await runTransaction(db, async (transaction) => {
       if (!cartData || cartData.length === 0) {
@@ -15,12 +15,19 @@ export const makePurchase = async (purchaseData, userId, cartData) => {
 
       const purchasesRef = collection(db, 'purchases');
       const newPurchaseRef = doc(purchasesRef);
+
+      const cartItemDTOs = cartData.map((item) => ({
+        productId: item.id,
+        quantity: item.count,
+        price: item.price,
+      }));
+
       const newPurchaseData = {
         ...purchaseData,
         userId,
         createdAt: serverTimestamp(),
         status: 'pending',
-        items: cartData,
+        items: cartItemDTOs,
       };
 
       transaction.set(newPurchaseRef, newPurchaseData);

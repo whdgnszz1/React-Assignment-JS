@@ -1,19 +1,22 @@
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import React, { useMemo } from 'react';
+
+import { useAuthStore } from '@/store/auth/useAuthStore';
+import { useCartStore } from '@/store/cart/useCartStore';
+
 import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow';
-import { selectUser } from '@/store/auth/authSelectors';
-import { selectCart } from '@/store/cart/cartSelectors';
-import { useAppSelector } from '@/store/hooks';
-import React from 'react';
 
 export const ProductInfoTable = () => {
-  const cart = useAppSelector(selectCart);
-  const user = useAppSelector(selectUser);
+  const { user } = useAuthStore();
+  const { cart } = useCartStore();
+  const cartItems = useMemo(() => Object.values(cart), [cart]);
 
   return (
     <Table>
@@ -27,9 +30,17 @@ export const ProductInfoTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {cart.map((item) => (
-          <ProductInfoTableRow key={item.id} item={item} user={user} />
-        ))}
+        {cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <ProductInfoTableRow key={item.id} item={item} user={user} />
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              장바구니가 비어 있습니다.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

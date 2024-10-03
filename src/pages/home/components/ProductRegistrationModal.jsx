@@ -15,52 +15,71 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+import { useAddProduct } from '@/lib/product/hooks/useAddProduct';
+
 import { ALL_CATEGORY_ID, categories } from '@/constants';
-import { createNewProduct, initialProductState } from '@/helpers/product';
-import { useAppDispatch } from '@/store/hooks';
-import { addProduct } from '@/store/product/productsActions';
+import { createNewProduct } from '@/helpers/product';
+import { useToastStore } from '@/store/toast/useToastStore';
 import { uploadImage } from '@/utils/imageUpload';
-import { useState } from 'react';
 
-export const ProductRegistrationModal = ({
-  isOpen,
-  onClose,
-  onProductAdded,
-}) => {
-  const dispatch = useAppDispatch();
-  const [product, setProduct] = useState(initialProductState);
+export const ProductRegistrationModal = ({ isOpen, onClose }) => {
+  const { mutateAsync, isPending: isLoading } = useAddProduct();
+  const { addToast } = useToastStore();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control,
+  } = useForm();
+  const [submissionError, setSubmissionError] =
+    (useState < string) | (null > null);
 
-  const handleImageChange = (e) => {
-    setProduct((prev) => ({ ...prev, image: e.target.files[0] }));
-  };
-
-  const handleSubmit = async () => {
+  const onSubmit = async (data) => {
+    setSubmissionError(null);
     try {
-      if (!product.image) {
+      if (!data.image || data.image.length === 0) {
         throw new Error('이미지를 선택해야 합니다.');
       }
+      const imageFile = data.image[0];
 
-      const imageUrl = await uploadImage(product.image);
+      const imageUrl = await uploadImage(imageFile);
       if (!imageUrl) {
         throw new Error('이미지 업로드에 실패했습니다.');
       }
 
-      const newProduct = createNewProduct(product, imageUrl);
-      await dispatch(addProduct(newProduct));
-      onClose();
-      onProductAdded();
-    } catch (error) {
-      console.error('물품 등록에 실패했습니다.', error);
-    }
-  };
+      const selectedCategory = categories.find(
+        (category) => category.id === data.categoryId
+      );
 
-  const handleCategoryChange = (value) => {
-    setProduct((prev) => ({ ...prev, categoryId: value }));
+      if (!selectedCategory) {
+        throw new Error('유효한 카테고리를 선택해주세요.');
+      }
+
+      const newProductData = {
+        title: data.title,
+        price: Number(data.price),
+        description: data.description,
+        category: { id: selectedCategory.id, name: selectedCategory.name },
+        image: imageFile,
+      };
+
+      const newProduct = createNewProduct(newProductData, imageUrl);
+
+      await mutateAsync(newProduct);
+
+      addToast('물품 등록 성공!', 'success');
+      reset();
+      onClose();
+    } catch (error) {
+      addToast('물픔 등록에 실패했습니다.', 'error');
+      console.error('물품 등록에 실패했습니다.', error);
+      setSubmissionError(error.message || '물품 등록에 실패했습니다.');
+    }
   };
 
   return (
@@ -69,54 +88,85 @@ export const ProductRegistrationModal = ({
         <DialogHeader>
           <DialogTitle>상품 등록</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <Input
-            name="title"
-            placeholder="상품명"
-            onChange={handleChange}
-            value={product.title || ''}
-          />
-          <Input
-            name="price"
-            type="number"
-            placeholder="가격"
-            onChange={handleChange}
-            value={product.price || ''}
-          />
-          <Textarea
-            name="description"
-            placeholder="상품 설명"
-            onChange={handleChange}
-            value={product.description || ''}
-          />
-          <Select
-            name="categoryId"
-            onValueChange={handleCategoryChange}
-            value={product.categoryId || ''}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="카테고리 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories
-                .filter((category) => category.id !== ALL_CATEGORY_ID)
-                .map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-          <Input
-            className="cursor-pointer"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </div>
-        <DialogFooter>
-          <Button onClick={handleSubmit}>등록</Button>
-        </DialogFooter>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid gap-4 py-4">
+            <Input
+              {...register('title', { required: '상품명을 입력해주세요.' })}
+              placeholder="상품명"
+            />
+            {errors.title && (
+              <p className="text-red-500 text-sm">{errors.title.message}</p>
+            )}
+            <Input
+              type="number"
+              {...register('price', { required: '가격을 입력해주세요.' })}
+              placeholder="가격"
+            />
+            {errors.price && (
+              <p className="text-red-500 text-sm">{errors.price.message}</p>
+            )}
+            <Textarea
+              {...register('description', {
+                required: '상품 설명을 입력해주세요.',
+              })}
+              placeholder="상품 설명"
+            />
+            {errors.description && (
+              <p className="text-red-500 text-sm">
+                {errors.description.message}
+              </p>
+            )}
+            <Controller
+              name="categoryId"
+              control={control}
+              defaultValue=""
+              rules={{ required: '카테고리를 선택해주세요.' }}
+              render={({ field }) => (
+                <>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    value={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter((category) => category.id !== ALL_CATEGORY_ID)
+                        .map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.categoryId && (
+                    <p className="text-red-500 text-sm">
+                      {errors.categoryId.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Input
+              className="cursor-pointer"
+              type="file"
+              accept="image/*"
+              {...register('image', { required: '이미지를 선택해주세요.' })}
+            />
+            {errors.image && (
+              <p className="text-red-500 text-sm">{errors.image.message}</p>
+            )}
+          </div>
+          {submissionError && (
+            <p className="text-red-500 text-sm">{submissionError}</p>
+          )}
+          <DialogFooter>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? '등록 중...' : '등록'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

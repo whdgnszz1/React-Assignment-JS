@@ -8,7 +8,7 @@ import { NameTableRow } from '@/pages/purchase/components/NameTableRow';
 import { PhoneTableRow } from '@/pages/purchase/components/PhoneTableRow';
 import { RequestsTableRow } from '@/pages/purchase/components/RequestsTableRow';
 
-export const ShippingInformationForm = ({ formData, onChange }) => {
+export const ShippingInformationForm = () => {
   return (
     <Card className="mt-6">
       <CardHeader>
@@ -20,10 +20,10 @@ export const ShippingInformationForm = ({ formData, onChange }) => {
       <CardContent>
         <Table>
           <TableBody>
-            <NameTableRow value={formData.name} onChange={onChange} />
-            <AddressTableRow value={formData.address} onChange={onChange} />
-            <PhoneTableRow value={formData.phone} onChange={onChange} />
-            <RequestsTableRow value={formData.requests} onChange={onChange} />
+            <NameTableRow />
+            <AddressTableRow />
+            <PhoneTableRow />
+            <RequestsTableRow />
           </TableBody>
         </Table>
       </CardContent>

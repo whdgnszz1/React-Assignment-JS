@@ -15,17 +15,18 @@ import {
 export const fetchProducts = async (filter, pageSize, page) => {
   try {
     let q = query(collection(db, 'products'), orderBy('id', 'desc'));
-
     if (filter.categoryId && filter.categoryId !== ALL_CATEGORY_ID) {
       q = query(q, where('category.id', '==', filter.categoryId));
     }
-    if (filter.title) {
+
+    if (filter.title && filter.title.length > 0) {
       q = query(
         q,
         where('title', '>=', filter.title[0]),
         where('title', '<=', filter.title[0] + '\uf8ff')
       );
     }
+
     if (filter.minPrice) {
       q = query(q, where('price', '>=', Number(filter.minPrice)));
     }
@@ -34,12 +35,18 @@ export const fetchProducts = async (filter, pageSize, page) => {
     }
 
     const querySnapshot = await getDocs(q);
-    let products = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate().toISOString(),
-      updatedAt: doc.data().updatedAt?.toDate().toISOString(),
-    }));
+    let products = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: String(data.id),
+        title: data.title,
+        price: Number(data.price),
+        category: data.category,
+        image: data.image || '',
+        createdAt: data.createdAt?.toDate().toISOString(),
+        updatedAt: data.updatedAt?.toDate().toISOString(),
+      };
+    });
 
     if (filter.title) {
       products = products.filter((product) =>
@@ -48,14 +55,14 @@ export const fetchProducts = async (filter, pageSize, page) => {
     }
 
     const totalCount = products.length;
-
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const paginatedProducts = products.slice(startIndex, endIndex);
 
     const hasNextPage = endIndex < totalCount;
+    const nextPage = hasNextPage ? page + 1 : undefined;
 
-    return { products: paginatedProducts, hasNextPage, totalCount };
+    return { products: paginatedProducts, hasNextPage, totalCount, nextPage };
   } catch (error) {
     console.error('Error fetching products: ', error);
     throw error;
@@ -78,7 +85,7 @@ export const addProductAPI = async (productData) => {
 
       const newProductData = {
         ...productData,
-        id: newId,
+        id: String(newId),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -88,7 +95,8 @@ export const addProductAPI = async (productData) => {
 
       const newProduct = {
         ...newProductData,
-        id: newId,
+        id: String(newId),
+        image: '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
