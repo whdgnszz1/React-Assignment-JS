@@ -1,21 +1,24 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { MAX_CART_VALUE } from '@/constants';
-import { cartValidationMessages } from '@/messages';
-import { changeCartItemCount, removeCartItem } from '@/store/cart/cartSlice';
-import { useAppDispatch } from '@/store/hooks';
-import { formatPrice } from '@/utils/formatter';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 
-export const ProductInfoTableRow = ({ item, user }) => {
-  const dispatch = useAppDispatch();
+import { MAX_CART_VALUE } from '@/constants';
+import { cartValidationMessages } from '@/messages';
+import { formatPrice } from '@/utils/formatter';
+
+export const ProductInfoTableRow = ({
+  item,
+  user,
+  removeCartItem,
+  changeCartItemCount,
+}) => {
   const { id, title, count, image, price } = item;
 
   const handleClickDeleteItem = () => {
     if (user) {
-      dispatch(removeCartItem({ itemId: id, userId: user.uid }));
+      removeCartItem(id, user.uid);
     }
   };
 
@@ -28,9 +31,7 @@ export const ProductInfoTableRow = ({ item, user }) => {
     }
 
     if (user) {
-      dispatch(
-        changeCartItemCount({ itemId: id, userId: user.uid, count: newCount })
-      );
+      changeCartItemCount({ itemId: id, count: newCount, userId: user.uid });
     }
   };
 
@@ -46,6 +47,8 @@ export const ProductInfoTableRow = ({ item, user }) => {
           onChange={handleChangeCount}
           value={count}
           className="w-20"
+          min={1}
+          max={MAX_CART_VALUE}
         />
       </TableCell>
       <TableCell>{formatPrice(price * count)}</TableCell>

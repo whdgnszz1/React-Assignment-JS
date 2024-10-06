@@ -2,7 +2,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
 
-export const PriceRange = ({ onChangeMinPrice, onChangeMaxPrice }) => {
+export const PriceRange = ({
+  onChangeMinPrice,
+  onChangeMaxPrice,
+  minPrice,
+  maxPrice,
+}) => {
   return (
     <div className="space-y-2 mt-4">
       <Label>가격 범위</Label>
@@ -12,6 +17,7 @@ export const PriceRange = ({ onChangeMinPrice, onChangeMaxPrice }) => {
             type="number"
             min="0"
             step="1000"
+            value={minPrice === -1 ? '' : minPrice}
             placeholder="최소 금액"
             onChange={onChangeMinPrice}
             className="pr-8 w-[120px]"
@@ -26,6 +32,7 @@ export const PriceRange = ({ onChangeMinPrice, onChangeMaxPrice }) => {
             type="number"
             min="0"
             step="1000"
+            value={maxPrice === -1 ? '' : maxPrice}
             placeholder="최대 금액"
             onChange={onChangeMaxPrice}
             className="pr-8 w-[120px]"

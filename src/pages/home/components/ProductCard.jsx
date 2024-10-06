@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { formatPrice } from '@/utils/formatter';
 import React, { useState } from 'react';
+
+import { formatPrice } from '@/utils/formatter';
 
 export const ProductCard = ({
   product,

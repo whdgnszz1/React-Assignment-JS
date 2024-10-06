@@ -1,19 +1,25 @@
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow';
-import { selectUser } from '@/store/auth/authSelectors';
-import { selectCart } from '@/store/cart/cartSelectors';
-import { useAppSelector } from '@/store/hooks';
 import React from 'react';
 
+import { useAuthStore } from '@/store/auth/useAuthStore';
+import { useCartStore } from '@/store/cart/useCartStore';
+
+import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow';
+
 export const ProductInfoTable = () => {
-  const cart = useAppSelector(selectCart);
-  const user = useAppSelector(selectUser);
+  const user = useAuthStore((state) => state.user);
+  const cart = useCartStore((state) => state.cart);
+  const removeCartItem = useCartStore((state) => state.removeCartItem);
+  const changeCartItemCount = useCartStore(
+    (state) => state.changeCartItemCount
+  );
 
   return (
     <Table>
@@ -27,9 +33,23 @@ export const ProductInfoTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {cart.map((item) => (
-          <ProductInfoTableRow key={item.id} item={item} user={user} />
-        ))}
+        {cart.length > 0 ? (
+          cart.map((item) => (
+            <ProductInfoTableRow
+              key={item.id}
+              item={item}
+              user={user}
+              removeCartItem={removeCartItem}
+              changeCartItemCount={changeCartItemCount}
+            />
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              장바구니가 비어 있습니다.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

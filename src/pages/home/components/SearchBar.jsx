@@ -3,13 +3,14 @@ import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
 import React from 'react';
 
-export const SearchBar = ({ onChangeInput }) => {
+export const SearchBar = ({ onChangeInput, value }) => {
   return (
     <div className="space-y-2 mt-4">
       <Label htmlFor="searchbar-input">검색</Label>
       <div className="relative">
         <Input
           id="searchbar-input"
+          value={value}
           placeholder="상품명을 입력해주세요"
           onChange={onChangeInput}
           className="pl-10"

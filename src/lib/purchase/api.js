@@ -6,7 +6,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-export const makePurchase = async (purchaseData, userId, cartData) => {
+export const makePurchaseAPI = async (purchaseData, userId, cartData) => {
   try {
     await runTransaction(db, async (transaction) => {
       if (!cartData || cartData.length === 0) {

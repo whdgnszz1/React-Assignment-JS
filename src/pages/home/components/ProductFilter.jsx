@@ -1,18 +1,18 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { Suspense } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
+import { useFilterStore } from '@/store/filter/useFilterStore';
+
+import { debounce } from '@/utils/common';
 
 import { ApiErrorBoundary } from '@/pages/common/components/ApiErrorBoundary';
-import {
-  setCategoryId,
-  setMaxPrice,
-  setMinPrice,
-  setTitle,
-} from '@/store/filter/filterActions';
-import { selectFilter } from '@/store/filter/filterSelectors';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { debounce } from '@/utils/common';
-import React from 'react';
 import { CategoryRadioGroup } from './CategoryRadioGroup';
 import { PriceRange } from './PriceRange';
 import { SearchBar } from './SearchBar';
@@ -24,47 +24,69 @@ const ProductFilterBox = ({ children }) => (
 );
 
 export const ProductFilter = () => {
-  const dispatch = useAppDispatch();
-  const filterState = useAppSelector(selectFilter);
+  const minPrice = useFilterStore((state) => state.minPrice);
+  const maxPrice = useFilterStore((state) => state.maxPrice);
+  const title = useFilterStore((state) => state.title);
+  const categoryId = useFilterStore((state) => state.categoryId);
+  const setTitle = useFilterStore((state) => state.setTitle);
+  const setMinPrice = useFilterStore((state) => state.setMinPrice);
+  const setMaxPrice = useFilterStore((state) => state.setMaxPrice);
+  const setCategoryId = useFilterStore((state) => state.setCategoryId);
 
-  const handleChangeInput = debounce((e) => {
-    dispatch(setTitle(e.target.value));
-  }, 300);
+  const [searchValue, setSearchValue] = useState(title);
 
-  const handlePriceChange = (actionCreator) =>
-    debounce((e) => {
+  const debouncedSetTitle = useMemo(
+    () => debounce((value) => setTitle(value), 300),
+    [setTitle]
+  );
+
+  useEffect(() => {
+    debouncedSetTitle(searchValue);
+  }, [searchValue, debouncedSetTitle]);
+
+  const handleChangeInput = useCallback((e) => {
+    setSearchValue(e.target.value);
+  }, []);
+
+  const handlePriceChange = useCallback(
+    (actionCreator) => (e) => {
       const value = e.target.value;
       if (value === '') {
-        dispatch(actionCreator(-1));
+        actionCreator(-1);
       } else {
         const numericValue = Math.max(0, parseInt(value, 10));
         if (!isNaN(numericValue)) {
-          dispatch(actionCreator(numericValue));
+          actionCreator(numericValue);
         }
       }
-    }, 300);
+    },
+    []
+  );
 
   const handleMinPrice = handlePriceChange(setMinPrice);
   const handleMaxPrice = handlePriceChange(setMaxPrice);
 
-  const handleChangeCategory = (value) => {
-    if (value !== undefined) {
-      dispatch(setCategoryId(value));
-    } else {
-      console.error('카테고리가 설정되지 않았습니다.');
-    }
-  };
+  const handleChangeCategory = useCallback(
+    (value) => {
+      if (value !== undefined) {
+        setCategoryId(value);
+      } else {
+        console.error('카테고리가 설정되지 않았습니다.');
+      }
+    },
+    [setCategoryId]
+  );
 
   return (
     <div className="space-y-4">
       <ProductFilterBox>
-        <SearchBar onChangeInput={handleChangeInput} />
+        <SearchBar onChangeInput={handleChangeInput} value={searchValue} />
       </ProductFilterBox>
       <ProductFilterBox>
         <ApiErrorBoundary>
           <Suspense fallback={<Loader2 className="h-24 w-24 animate-spin" />}>
             <CategoryRadioGroup
-              categoryId={filterState.categoryId}
+              categoryId={categoryId}
               onChangeCategory={handleChangeCategory}
             />
           </Suspense>
@@ -74,6 +96,8 @@ export const ProductFilter = () => {
         <PriceRange
           onChangeMinPrice={handleMinPrice}
           onChangeMaxPrice={handleMaxPrice}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
         />
       </ProductFilterBox>
     </div>

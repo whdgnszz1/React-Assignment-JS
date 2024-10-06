@@ -15,7 +15,6 @@ import {
 export const fetchProducts = async (filter, pageSize, page) => {
   try {
     let q = query(collection(db, 'products'), orderBy('id', 'desc'));
-
     if (filter.categoryId && filter.categoryId !== ALL_CATEGORY_ID) {
       q = query(q, where('category.id', '==', filter.categoryId));
     }
@@ -27,6 +26,7 @@ export const fetchProducts = async (filter, pageSize, page) => {
         where('title', '<=', filter.title[0] + '\uf8ff')
       );
     }
+
     if (filter.minPrice) {
       q = query(q, where('price', '>=', Number(filter.minPrice)));
     }
@@ -60,8 +60,9 @@ export const fetchProducts = async (filter, pageSize, page) => {
     const paginatedProducts = products.slice(startIndex, endIndex);
 
     const hasNextPage = endIndex < totalCount;
+    const nextPage = hasNextPage ? page + 1 : undefined;
 
-    return { products: paginatedProducts, hasNextPage, totalCount };
+    return { products: paginatedProducts, hasNextPage, totalCount, nextPage };
   } catch (error) {
     console.error('Error fetching products: ', error);
     throw error;

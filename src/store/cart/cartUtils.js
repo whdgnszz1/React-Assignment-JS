@@ -9,35 +9,36 @@ export const getCartFromLocalStorage = (userId) => {
     return [];
   }
 
-  const cartItem = parseJSON(cartData) | null;
-  return cartItem?.[userId] ?? [];
+  const cartItems = parseJSON(cartData);
+  return cartItems?.[userId] ?? [];
 };
 
 export const resetCartAtLocalStorage = (userId) => {
   const cartData = getItem(CART_LOCAL_STORAGE_KEY);
-  const cartItem = cartData ? parseJSON(cartData) : {};
+  const cartItems = cartData ? parseJSON(cartData) : {};
 
   setItem(CART_LOCAL_STORAGE_KEY, {
-    ...cartItem,
+    ...cartItems,
     [userId]: [],
   });
 };
 
 export const setCartToLocalStorage = (cart, userId) => {
   const cartData = getItem(CART_LOCAL_STORAGE_KEY);
-  const cartItem = cartData ? parseJSON(cartData) : {};
+  const cartItems = cartData ? parseJSON(cartData) : {};
 
   setItem(CART_LOCAL_STORAGE_KEY, {
-    ...cartItem,
+    ...cartItems,
     [userId]: cart,
   });
 };
 
-export const calculateTotal = (cart) =>
-  cart.reduce(
+export const calculateTotal = (cart) => {
+  return cart.reduce(
     (acc, item) => ({
       totalCount: acc.totalCount + item.count,
       totalPrice: acc.totalPrice + item.price * item.count,
     }),
     { totalCount: 0, totalPrice: 0 }
   );
+};

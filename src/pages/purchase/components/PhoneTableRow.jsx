@@ -1,43 +1,39 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Phone } from 'lucide-react';
-import React, { useState } from 'react';
-
 import { PHONE_PATTERN } from '@/constants';
+import React from 'react';
+import { useFormContext } from 'react-hook-form';
 
-export const PhoneTableRow = ({ value, onChange }) => {
-  const [error, setError] = useState('');
-
-  const handleChange = (e) => {
-    const newValue = e.target.value;
-    onChange(e);
-
-    if (!PHONE_PATTERN.test(newValue) && newValue !== '') {
-      setError('-를 포함한 휴대폰 번호만 가능합니다');
-    } else {
-      setError('');
-    }
-  };
+export const PhoneTableRow = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <TableRow>
-      <TableCell className="font-bold">
-        <Label htmlFor="phone" className="flex items-center">
-          <Phone className="mr-2 h-4 w-4" />
-          전화번호
-        </Label>
+      <TableCell>
+        <Label htmlFor="phone">전화번호</Label>
       </TableCell>
       <TableCell>
         <Input
           id="phone"
-          name="phone"
-          value={value}
-          onChange={handleChange}
-          placeholder="휴대폰 번호를 입력하세요"
-          className={error ? 'border-red-500' : ''}
+          type="text"
+          placeholder="전화번호를 입력하세요"
+          {...register('phone', {
+            required: '전화번호를 입력하세요',
+            pattern: {
+              value: PHONE_PATTERN,
+              message: '유효한 전화번호를 입력하세요.',
+            },
+          })}
         />
-        {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+        {errors.phone?.message && typeof errors.phone.message === 'string' && (
+          <p className="text-sm text-red-500 mt-[10px]">
+            {errors.phone.message}
+          </p>
+        )}
       </TableCell>
     </TableRow>
   );
