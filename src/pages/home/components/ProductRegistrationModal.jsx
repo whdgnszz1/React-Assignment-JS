@@ -36,7 +36,11 @@ export const ProductRegistrationModal = ({
   };
 
   const handleImageChange = (e) => {
-    setProduct((prev) => ({ ...prev, image: e.target.files[0] }));
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      setProduct((prev) => ({ ...prev, image: file }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -60,7 +64,10 @@ export const ProductRegistrationModal = ({
   };
 
   const handleCategoryChange = (value) => {
-    setProduct((prev) => ({ ...prev, categoryId: value }));
+    setProduct((prev) => ({
+      ...prev,
+      category: { ...prev.category, id: value },
+    }));
   };
 
   return (
@@ -92,7 +99,7 @@ export const ProductRegistrationModal = ({
           <Select
             name="categoryId"
             onValueChange={handleCategoryChange}
-            value={product.categoryId || ''}
+            value={product.category.id || ''}
           >
             <SelectTrigger>
               <SelectValue placeholder="카테고리 선택" />

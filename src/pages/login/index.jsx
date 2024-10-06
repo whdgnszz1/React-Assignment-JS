@@ -59,8 +59,8 @@ export const LoginPage = () => {
           dispatch(
             setUser({
               uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
+              email: user.email ?? '',
+              displayName: user.displayName ?? '',
             })
           );
         }

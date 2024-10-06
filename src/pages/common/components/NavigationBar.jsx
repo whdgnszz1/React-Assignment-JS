@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useModal } from '@/hooks/useModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+
 import { CartButton } from './CartButton';
 import { ConfirmModal } from './ConfirmModal';
 import { LoginButton } from './LoginButton';
@@ -41,10 +42,6 @@ export const NavigationBar = () => {
     navigate(pageRoutes.main);
   };
 
-  const handleCartClick = () => {
-    navigate(pageRoutes.cart);
-  };
-
   return (
     <>
       <nav className="fixed top-0 w-full bg-white shadow-md z-50">
@@ -60,8 +57,8 @@ export const NavigationBar = () => {
               {isLogin ? (
                 <ApiErrorBoundary>
                   <Suspense fallback={<Skeleton className="w-24 h-8" />}>
-                    <CartButton cart={cart} onClick={handleCartClick} />
-                    <LogoutButton data={user} onClick={handleLogout} />
+                    <CartButton cart={cart} />
+                    <LogoutButton onClick={handleLogout} />
                   </Suspense>
                 </ApiErrorBoundary>
               ) : (

@@ -7,7 +7,6 @@ export const pick = (obj, ...propNames) => {
     if (propNames.includes(key)) {
       acc[key] = obj[key];
     }
-
     return acc;
   }, {});
 };
@@ -32,10 +31,9 @@ export const isNumber = (value) => typeof value === 'number';
 
 export const parseJSON = (value) => {
   if (!value) {
-    return value;
+    return null;
   }
 
   const result = JSON.parse(value);
-
   return typeof result === 'string' ? JSON.parse(result) : result;
 };

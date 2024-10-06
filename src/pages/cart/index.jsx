@@ -11,7 +11,7 @@ export const Cart = () => {
 
   return (
     <Layout
-      className="p-2.5 flex flex-col"
+      containerClassName="p-2.5 flex flex-col"
       authStatus={authStatusType.NEED_LOGIN}
     >
       {isExist ? <CartTable /> : <EmptyNotice />}

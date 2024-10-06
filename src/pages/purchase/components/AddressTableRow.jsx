@@ -4,7 +4,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { MapPin } from 'lucide-react';
 import React from 'react';
 
-export const AddressTableRow = ({ value, onChange, error }) => {
+export const AddressTableRow = ({ value, onChange }) => {
   return (
     <TableRow>
       <TableCell className="font-bold">

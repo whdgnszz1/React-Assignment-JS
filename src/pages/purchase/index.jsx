@@ -68,7 +68,7 @@ export const Purchase = () => {
 
   const handleClickPurchase = async (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid || !user) return;
 
     dispatch(purchaseStart());
     const purchaseData = {
@@ -87,8 +87,16 @@ export const Purchase = () => {
       console.log('구매 성공!');
       navigate(pageRoutes.main);
     } catch (err) {
-      dispatch(purchaseFailure(err.message));
-      console.error('잠시 문제가 발생했습니다! 다시 시도해 주세요.');
+      if (err instanceof Error) {
+        dispatch(purchaseFailure(err.message));
+        console.error(
+          '잠시 문제가 발생했습니다! 다시 시도해 주세요.',
+          err.message
+        );
+      } else {
+        dispatch(purchaseFailure('알 수 없는 오류가 발생했습니다.'));
+        console.error('잠시 문제가 발생했습니다! 다시 시도해 주세요.');
+      }
     }
   };
 

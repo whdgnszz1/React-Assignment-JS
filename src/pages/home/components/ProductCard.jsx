@@ -19,6 +19,7 @@ export const ProductCard = ({
     e.stopPropagation();
     onClickAddCartButton(e, product);
   };
+
   const handleClickPurchaseButton = (e) => {
     e.stopPropagation();
     onClickPurchaseButton(e, product);
@@ -32,8 +33,8 @@ export const ProductCard = ({
           alt={`${title} 상품 이미지`}
           className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={() => setImageLoaded(true)}
-          width="320"
-          height="160"
+          width={320}
+          height={160}
         />
       </div>
       <CardContent className="p-4">

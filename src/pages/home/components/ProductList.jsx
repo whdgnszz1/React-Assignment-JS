@@ -53,8 +53,11 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
         setCurrentPage(page);
       }
     } catch (error) {
-      if (isFirebaseIndexError(error)) {
-        const link = extractIndexLink(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (isFirebaseIndexError(errorMessage)) {
+        const link = extractIndexLink(errorMessage);
         setIndexLink(link);
         setIsIndexErrorModalOpen(true);
       }
@@ -69,7 +72,8 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
 
   const handleCartAction = (product) => {
     if (isLogin && user) {
-      dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
+      const cartItem = { ...product, count: 1 };
+      dispatch(addCartItem({ item: cartItem, userId: user.uid, count: 1 }));
       console.log(`${product.title} 상품이 \n장바구니에 담겼습니다.`);
     } else {
       navigate(pageRoutes.login);
@@ -78,7 +82,8 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
 
   const handlePurchaseAction = (product) => {
     if (isLogin && user) {
-      dispatch(addCartItem({ item: product, userId: user.id, count: 1 }));
+      const cartItem = { ...product, count: 1 };
+      dispatch(addCartItem({ item: cartItem, userId: user.uid, count: 1 }));
       navigate(pageRoutes.cart);
     } else {
       navigate(pageRoutes.login);
@@ -99,60 +104,54 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
     }
   }, [firstProductImage]);
 
-  const renderContent = () => {
-    if (isLoading && products.length === 0) {
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: pageSize }, (_, index) => (
-            <ProductCardSkeleton key={index} />
-          ))}
-        </div>
-      );
-    }
-
-    if (products.length === 0) {
-      return <EmptyProduct onAddProduct={openModal} />;
-    }
-
-    return (
-      <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.map((product, index) => (
-            <ProductCard
-              key={`${product.id}_${index}`}
-              product={product}
-              onClickAddCartButton={(ev) => {
-                ev.stopPropagation();
-                handleCartAction(product);
-              }}
-              onClickPurchaseButton={(ev) => {
-                ev.stopPropagation();
-                handlePurchaseAction(product);
-              }}
-            />
-          ))}
-        </div>
-        {hasNextPage && currentPage * pageSize < totalCount && (
-          <div className="flex justify-center mt-4">
-            <Button onClick={() => loadProductsData()} disabled={isLoading}>
-              {isLoading ? '로딩 중...' : '더 보기'}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </>
-    );
-  };
-
   return (
     <>
       <div className="space-y-4">
         <div className="flex justify-end mt-4">
-          <Button onClick={openModal}>
-            <Plus className="mr-2 h-4 w-4" /> 상품 등록
-          </Button>
+          {isLogin && (
+            <Button onClick={openModal}>
+              <Plus className="mr-2 h-4 w-4" /> 상품 등록
+            </Button>
+          )}
         </div>
-        {renderContent()}
+
+        {isLoading && products.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {Array.from({ length: pageSize }, (_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <EmptyProduct onAddProduct={openModal} />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.map((product, index) => (
+                <ProductCard
+                  key={`${product.id}_${index}`}
+                  product={product}
+                  onClickAddCartButton={(e) => {
+                    e.stopPropagation();
+                    handleCartAction(product);
+                  }}
+                  onClickPurchaseButton={(e) => {
+                    e.stopPropagation();
+                    handlePurchaseAction(product);
+                  }}
+                />
+              ))}
+            </div>
+            {hasNextPage && currentPage * pageSize < totalCount && (
+              <div className="flex justify-center mt-4">
+                <Button onClick={() => loadProductsData()} disabled={isLoading}>
+                  {isLoading ? '로딩 중...' : '더 보기'}
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+
         {isOpen && (
           <ProductRegistrationModal
             isOpen={isOpen}

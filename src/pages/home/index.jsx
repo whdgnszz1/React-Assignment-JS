@@ -6,7 +6,7 @@ import { ProductList } from './components/ProductList';
 
 export const Home = () => {
   return (
-    <Layout className="p-4">
+    <Layout>
       <ProductFilter />
       <ApiErrorBoundary>
         <Suspense fallback={<LoadingSkeleton />}>
