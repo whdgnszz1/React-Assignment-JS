@@ -10,8 +10,9 @@ import React, {
 
 import { useFilterStore } from '@/store/filter/useFilterStore';
 
-import { ApiErrorBoundary } from '@/pages/common/components/ApiErrorBoundary';
 import { debounce } from '@/utils/common';
+
+import { ApiErrorBoundary } from '@/pages/common/components/ApiErrorBoundary';
 import { CategoryRadioGroup } from './CategoryRadioGroup';
 import { PriceRange } from './PriceRange';
 import { SearchBar } from './SearchBar';
@@ -23,16 +24,14 @@ const ProductFilterBox = ({ children }) => (
 );
 
 export const ProductFilter = () => {
-  const {
-    minPrice,
-    maxPrice,
-    title,
-    categoryId,
-    setTitle,
-    setMinPrice,
-    setMaxPrice,
-    setCategoryId,
-  } = useFilterStore();
+  const minPrice = useFilterStore((state) => state.minPrice);
+  const maxPrice = useFilterStore((state) => state.maxPrice);
+  const title = useFilterStore((state) => state.title);
+  const categoryId = useFilterStore((state) => state.categoryId);
+  const setTitle = useFilterStore((state) => state.setTitle);
+  const setMinPrice = useFilterStore((state) => state.setMinPrice);
+  const setMaxPrice = useFilterStore((state) => state.setMaxPrice);
+  const setCategoryId = useFilterStore((state) => state.setCategoryId);
 
   const [searchValue, setSearchValue] = useState(title);
 

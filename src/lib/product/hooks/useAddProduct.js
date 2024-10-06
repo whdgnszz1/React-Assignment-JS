@@ -10,7 +10,7 @@ export const useAddProduct = () => {
   return useMutation({
     mutationFn: addProductAPI,
     onSuccess: () => {
-      addToast('등록 성공!', 'success');
+      addToast('물품 등록 성공!', 'success');
       queryClient.invalidateQueries({ queryKey: [PRODUCT_KEY] });
     },
     onError: (error) => {

@@ -6,7 +6,7 @@ import React from 'react';
 import { useCartStore } from '@/store/cart/useCartStore';
 
 export const Cart = () => {
-  const { cart } = useCartStore();
+  const cart = useCartStore((state) => state.cart);
 
   const isExist = cart.length > 0;
 

@@ -27,7 +27,7 @@ import { uploadImage } from '@/utils/imageUpload';
 
 export const ProductRegistrationModal = ({ isOpen, onClose }) => {
   const { mutateAsync, isPending: isLoading } = useAddProduct();
-  const { addToast } = useToastStore();
+  const addToast = useToastStore((state) => state.addToast);
 
   const {
     register,
@@ -36,8 +36,7 @@ export const ProductRegistrationModal = ({ isOpen, onClose }) => {
     reset,
     control,
   } = useForm();
-  const [submissionError, setSubmissionError] =
-    (useState < string) | (null > null);
+  const [submissionError, setSubmissionError] = useState(null);
 
   const onSubmit = async (data) => {
     setSubmissionError(null);
@@ -71,8 +70,6 @@ export const ProductRegistrationModal = ({ isOpen, onClose }) => {
       const newProduct = createNewProduct(newProductData, imageUrl);
 
       await mutateAsync(newProduct);
-
-      addToast('물품 등록 성공!', 'success');
       reset();
       onClose();
     } catch (error) {

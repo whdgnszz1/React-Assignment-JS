@@ -2,8 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock, Mail, User } from 'lucide-react';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 
+import { EMAIL_PATTERN } from '@/constants';
+import { useRegisterUser } from '@/lib/auth';
 import { Layout, authStatusType } from '@/pages/common/components/Layout';
 
 export const RegisterPage = () => {
@@ -13,15 +16,13 @@ export const RegisterPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm <
-  FormInputs >
-  {
+  } = useForm({
     defaultValues: {
       name: '',
       email: '',
       password: '',
     },
-  };
+  });
 
   const onSubmit = useCallback(
     (data) => {

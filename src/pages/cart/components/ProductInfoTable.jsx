@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { useAuthStore } from '@/store/auth/useAuthStore';
 import { useCartStore } from '@/store/cart/useCartStore';
@@ -14,9 +14,12 @@ import { useCartStore } from '@/store/cart/useCartStore';
 import { ProductInfoTableRow } from '@/pages/cart/components/ProductInfoTableRow';
 
 export const ProductInfoTable = () => {
-  const { user } = useAuthStore();
-  const { cart } = useCartStore();
-  const cartItems = useMemo(() => Object.values(cart), [cart]);
+  const user = useAuthStore((state) => state.user);
+  const cart = useCartStore((state) => state.cart);
+  const removeCartItem = useCartStore((state) => state.removeCartItem);
+  const changeCartItemCount = useCartStore(
+    (state) => state.changeCartItemCount
+  );
 
   return (
     <Table>
@@ -30,9 +33,15 @@ export const ProductInfoTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {cartItems.length > 0 ? (
-          cartItems.map((item) => (
-            <ProductInfoTableRow key={item.id} item={item} user={user} />
+        {cart.length > 0 ? (
+          cart.map((item) => (
+            <ProductInfoTableRow
+              key={item.id}
+              item={item}
+              user={user}
+              removeCartItem={removeCartItem}
+              changeCartItemCount={changeCartItemCount}
+            />
           ))
         ) : (
           <TableRow>

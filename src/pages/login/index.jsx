@@ -19,14 +19,12 @@ export const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm <
-  FormInputs >
-  {
+  } = useForm({
     defaultValues: {
       email: '',
       password: '',
     },
-  };
+  });
 
   const onSubmit = useCallback(
     (data) => {

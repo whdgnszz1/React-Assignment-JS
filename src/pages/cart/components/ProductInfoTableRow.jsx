@@ -4,19 +4,17 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 
-import { useCartStore } from '@/store/cart/useCartStore';
-
 import { MAX_CART_VALUE } from '@/constants';
 import { cartValidationMessages } from '@/messages';
 import { formatPrice } from '@/utils/formatter';
 
-export const ProductInfoTableRow = ({ item, user }) => {
+export const ProductInfoTableRow = ({
+  item,
+  user,
+  removeCartItem,
+  changeCartItemCount,
+}) => {
   const { id, title, count, image, price } = item;
-
-  const removeCartItem = useCartStore((state) => state.removeCartItem);
-  const changeCartItemCount = useCartStore(
-    (state) => state.changeCartItemCount
-  );
 
   const handleClickDeleteItem = () => {
     if (user) {

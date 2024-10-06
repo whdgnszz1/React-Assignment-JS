@@ -17,8 +17,9 @@ import { ShippingInformationForm } from '@/pages/purchase/components/ShippingInf
 import { FormProvider, useForm } from 'react-hook-form';
 
 export const Purchase = () => {
-  const { user } = useAuthStore();
-  const { cart, initCart } = useCartStore();
+  const user = useAuthStore((state) => state.user);
+  const cart = useCartStore((state) => state.cart);
+  const initCart = useCartStore((state) => state.initCart);
 
   const methods = useForm({
     defaultValues: {
