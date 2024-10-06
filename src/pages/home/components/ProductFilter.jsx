@@ -27,15 +27,15 @@ export const ProductFilter = () => {
   const dispatch = useAppDispatch();
   const filterState = useAppSelector(selectFilter);
 
-  const handleChangeInput = debounce((ev) => {
-    dispatch(setTitle(ev.target.value));
+  const handleChangeInput = debounce((e) => {
+    dispatch(setTitle(e.target.value));
   }, 300);
 
   const handlePriceChange = (actionCreator) =>
-    debounce((ev) => {
-      const value = ev.target.value;
+    debounce((e) => {
+      const value = e.target.value;
       if (value === '') {
-        dispatch(actionCreator(null));
+        dispatch(actionCreator(-1));
       } else {
         const numericValue = Math.max(0, parseInt(value, 10));
         if (!isNaN(numericValue)) {

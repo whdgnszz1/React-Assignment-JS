@@ -5,7 +5,7 @@ import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useLocation } from 'react-router-dom';
 
-const ApiErrorFallback = ({ error, resetErrorBoundary }) => {
+export const ApiErrorFallback = ({ error, resetErrorBoundary }) => {
   if (error instanceof Error) {
     if (error.name === 'FetchError') {
       return (

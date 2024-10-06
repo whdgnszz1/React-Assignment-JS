@@ -12,7 +12,7 @@ export const authStatusType = {
 
 export const Layout = ({
   children,
-  containerClassName,
+  containerClassName = '',
   authStatus = authStatusType.COMMON,
 }) => {
   const { isLogin } = useAppSelector((state) => state.auth);

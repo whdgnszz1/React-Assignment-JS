@@ -15,21 +15,23 @@ export const ProductInfoTableRow = ({ item, user }) => {
 
   const handleClickDeleteItem = () => {
     if (user) {
-      dispatch(removeCartItem({ itemId: id, userId: user.id }));
+      dispatch(removeCartItem({ itemId: id, userId: user.uid }));
     }
   };
 
-  const handleChangeCount = (event) => {
-    const newCount = Number(event.target.value);
+  const handleChangeCount = (e) => {
+    const newCount = Number(e.target.value);
 
     if (newCount > MAX_CART_VALUE) {
       alert(cartValidationMessages.MAX_INPUT_VALUE);
       return;
     }
 
-    dispatch(
-      changeCartItemCount({ itemId: id, userId: user.id, count: newCount })
-    );
+    if (user) {
+      dispatch(
+        changeCartItemCount({ itemId: id, userId: user.uid, count: newCount })
+      );
+    }
   };
 
   return (

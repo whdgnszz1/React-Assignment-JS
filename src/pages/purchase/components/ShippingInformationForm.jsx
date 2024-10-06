@@ -8,7 +8,7 @@ import { NameTableRow } from '@/pages/purchase/components/NameTableRow';
 import { PhoneTableRow } from '@/pages/purchase/components/PhoneTableRow';
 import { RequestsTableRow } from '@/pages/purchase/components/RequestsTableRow';
 
-export const ShippingInformationForm = ({ formData, onChange }) => {
+export const ShippingInformationForm = ({ formData, onChange, errors }) => {
   return (
     <Card className="mt-6">
       <CardHeader>
