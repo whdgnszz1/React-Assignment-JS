@@ -1,15 +1,17 @@
 export const pick = (obj, ...propNames) => {
-  if (!obj || !propNames) {
-    return {};
-  }
+  const result = {};
 
-  return Object.keys(obj).reduce((acc, key) => {
-    if (propNames.includes(key)) {
-      acc[key] = obj[key];
+  propNames.forEach((key) => {
+    if (key in obj) {
+      result[key] = obj[key];
+    } else {
+      throw new Error(
+        `Property "${String(key)}" does not exist on the object.`
+      );
     }
+  });
 
-    return acc;
-  }, {});
+  return result;
 };
 
 export const debounce = (fn, wait) => {
