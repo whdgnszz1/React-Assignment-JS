@@ -16,11 +16,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ALL_CATEGORY_ID, categories } from '@/constants';
+import React, { useState } from 'react';
+
 import { createNewProduct, initialProductState } from '@/helpers/product';
 import { useAppDispatch } from '@/store/hooks';
 import { addProduct } from '@/store/product/productsActions';
 import { uploadImage } from '@/utils/imageUpload';
-import { useState } from 'react';
 
 export const ProductRegistrationModal = ({
   isOpen,
@@ -30,7 +31,7 @@ export const ProductRegistrationModal = ({
   const dispatch = useAppDispatch();
   const [product, setProduct] = useState(initialProductState);
 
-  const handleChange = () => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
   };
